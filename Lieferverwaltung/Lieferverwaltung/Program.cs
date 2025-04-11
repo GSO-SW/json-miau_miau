@@ -1,4 +1,5 @@
-﻿namespace Lieferverwaltung
+﻿using System.IO;
+namespace Lieferverwaltung
 {
     class Program
     {
@@ -7,6 +8,7 @@
         {
             BeispielobjekteAnlegen();
             Console.WriteLine(lieferungen.Count);
+            JsonDateiErstellen();       
         }
 
         static void BeispielobjekteAnlegen()
@@ -29,5 +31,35 @@
                 , "07708"
             ));
         }
+
+        static void JsonDateiErstellen()
+        {
+            string json = "{\n";
+            json += $"  \"anzahl\": {lieferungen.Count},\n";
+            json += "  \"lieferungen\": [\n";
+
+            for (int i = 0; i < lieferungen.Count; i++)
+            {
+                Lieferung l = lieferungen[i];
+                json += "    {\n";
+                json += $"      \"datum\": \"{l.Datum:yyyy-MM-dd}\",\n";
+                json += $"      \"sendungsnummer\": \"{l.Sendungsnummer}\",\n";
+                json += $"      \"plz\": {l.PLZ}\n";
+                json += "    }";
+
+                if (i < lieferungen.Count - 1)
+                    json += ",";
+                json += "\n";
+            }
+
+            json += "  ]\n";
+            json += "}";
+
+            string pfad = @"C:\Users\Marlon Esman\Downloads\lieferungen.json";
+            File.WriteAllText(pfad, json);
+            Console.WriteLine("JSON-Datei wurde unter Downloads gespeichert.");
+
+        }
+
     }
 }
